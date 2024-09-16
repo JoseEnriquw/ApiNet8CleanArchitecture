@@ -93,6 +93,19 @@ namespace Infrastructure.Repository
                 _logger.LogError(ex, "Error finding entity ");
                 throw;
             }
+        }      
+        
+        public async Task<List<T>> WhereAsync<T>(Expression<Func<T, bool>> func) where T : class
+        {
+            try
+            {
+                return await _dbContext.Set<T>().Where(func).ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error finding entity in where condition");
+                throw;
+            }
         }
     }
 }

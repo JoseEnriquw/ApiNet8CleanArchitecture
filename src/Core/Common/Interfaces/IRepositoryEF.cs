@@ -14,5 +14,6 @@ namespace Core.Common.Interfaces
         Task<List<T>> GetAllAsync<T>() where T : class;
 
         Task<T> FindAsync<T>(Expression<Func<T, bool>> func) where T : class;
+        Task<List<T>> WhereAsync<T>(Expression<Func<T, bool>> func) where T : class;
     }
 }

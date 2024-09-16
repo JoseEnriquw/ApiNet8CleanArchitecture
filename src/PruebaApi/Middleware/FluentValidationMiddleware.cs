@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace PruebaApi.Middleware
 {
-    internal sealed class FluentValidationMiddleware : IMiddleware
+    public sealed class FluentValidationMiddleware : IMiddleware
     {
         private readonly ILogger<FluentValidationMiddleware> _logger;
         public FluentValidationMiddleware(ILogger<FluentValidationMiddleware> logger) => _logger = logger;
@@ -27,18 +27,18 @@ namespace PruebaApi.Middleware
             var statusCode = StatusCodes.Status400BadRequest;
             var response = GetErrors(exception);
 
-            response.ForEach(x => _logger.LogError($"BadRequest - {x}"));
+            response.ForEach(x => _logger.LogError("BadRequest - {x}", x));
 
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = statusCode;
             await httpContext.Response.WriteAsync(JsonSerializer.Serialize(response));
         }
-        private List<Notify> GetErrors(Exception exception)
+        private static List<Notify> GetErrors(Exception exception)
         {
 
-            if (exception is ValidationException)
+            if (exception.InnerException is ValidationException || exception is ValidationException)
             {
-                var validationException = exception as ValidationException;
+                var validationException = (ValidationException)exception;
                 return validationException.Errors.Select(x => new Notify
                 {
                     Code = x.ErrorCode,
@@ -63,7 +63,7 @@ namespace PruebaApi.Middleware
             var statusCode = StatusCodes.Status500InternalServerError;
             var response = GetErrors(exception);
 
-            response.ForEach(x => _logger.LogError($"InternalServerError - {x}"));
+            response.ForEach(x => _logger.LogError("InternalServerError - {x}", x));
 
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = statusCode;

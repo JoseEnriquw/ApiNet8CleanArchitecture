@@ -10,6 +10,8 @@ namespace Core.Domain.Common
         public const string INVALID_MAIL = "Email is not valid";
         public const string NOT_FOUND_GET_BY_ID = "The Id {0} of {1} was not found in the database";
         public const string MUST_BE_A_POSITIVE_NUMBER = "{0} must be greater than zero";
+        public const string MUST_BE_POTENCY_NUMBER_OF_TWO = "The number of players must be a numerical potency of 2";
+        public const string MUST_BE_GENDER = "The gender value must be 1 o 2";
     }
 
 }

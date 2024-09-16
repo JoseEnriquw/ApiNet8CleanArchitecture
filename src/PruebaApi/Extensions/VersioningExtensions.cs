@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Asp.Versioning;
 
 namespace PruebaApi.Extensions
 {
@@ -15,7 +15,7 @@ namespace PruebaApi.Extensions
                // If the client hasn't specified the API version in the request, use the default API version number
                options.AssumeDefaultVersionWhenUnspecified = true;
            })
-           .AddVersionedApiExplorer(options =>
+           .AddApiExplorer(options =>
            {
                // Add the versioned api explorer, which also adds IApiVersionDescriptionProvider service
                // NOTE: the specified format code will format the version as "'v'major[.minor][-status]"
