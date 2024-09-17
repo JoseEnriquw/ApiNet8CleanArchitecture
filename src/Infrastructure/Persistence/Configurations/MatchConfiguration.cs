@@ -8,6 +8,7 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Match> builder)
         {
+            builder.ToTable("match");
             builder.HasKey(m => m.Id);
             builder.Property(m => m.Id).ValueGeneratedOnAdd();
             builder.Property(m => m.DateMatch).IsRequired();

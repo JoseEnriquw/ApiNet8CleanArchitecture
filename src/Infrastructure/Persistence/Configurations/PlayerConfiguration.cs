@@ -8,6 +8,7 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Player> builder)
         {
+            builder.ToTable("player");
             builder.HasKey(p => p.Id);
             builder.Property(p => p.Id).ValueGeneratedOnAdd();
             builder.Property(p => p.Name).HasMaxLength(100).IsRequired();

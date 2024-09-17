@@ -10,13 +10,13 @@ namespace Infrastructure.Service
         private ITournamentStrategy? _strategy;
         public async Task<TournamentResult> PlayTournament(List<Player> players,EGender gender)
         {
-            _strategy= factory.GetStrategy(gender);
+            _strategy= factory.GetStrategy(gender.ToString());
             if (_strategy == null) throw new NullReferenceException("ITournamentStrategy cannot be null");
 
             var tournament = new Tournament()
             {
                 StartDate = DateTime.Now,
-                GenderId = (int)gender,
+                GenderId = (int)gender!,
                 TournamentPlayers= players.Select(x=> new TournamentPlayer
                 {
                     PlayerId=x.Id,

@@ -1,6 +1,6 @@
-﻿using Core.Common.Factories;
-using Core.Common.Interfaces;
-using Core.Common.Strategies;
+﻿using Core.Common.Interfaces;
+using Core.Common.Models.Factories;
+using Core.Common.Models.Strategies;
 using Infrastructure.Options;
 using Infrastructure.Persistence;
 using Infrastructure.Repository;
@@ -24,10 +24,11 @@ namespace Infrastructure.Boopstrap
             services.AddScoped<ApplicationDbContext>(); ;
             services.AddScoped<IRepositoryEF, RepositoryEF>();
 
-            services.AddScoped<ITournamentStrategyFactory, TournamentStrategyFactory>();
-            services.AddScoped<ITournamentStrategy, MaleTournamentStrategy>();
-            services.AddScoped<ITournamentStrategy, FemaleTournamentStrategy>();
+            services.AddSingleton<ITournamentStrategyFactory, TournamentStrategyFactory>();
+            services.AddSingleton(typeof(MaleTournamentStrategy));
+            services.AddSingleton(typeof(FemaleTournamentStrategy));
             services.AddScoped<ITournamentService, TournamentService>();
+            services.AddSingleton<IPaginationService, PaginationService>();
 
 
             return services;

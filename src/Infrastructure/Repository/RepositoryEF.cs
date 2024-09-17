@@ -1,4 +1,8 @@
 ﻿using Core.Common.Interfaces;
+using Core.Common.Models;
+using Core.Domain.Dto;
+using Core.Domain.Entities;
+using Core.UseCase.V1.TournamentOperations.Queries.GetAll;
 using Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
@@ -9,11 +13,14 @@ namespace Infrastructure.Repository
     public class RepositoryEF : IRepositoryEF
     {
         private readonly ILogger<RepositoryEF> _logger;
-        private readonly DbContext _dbContext;
-        public RepositoryEF(ILogger<RepositoryEF> logger, ApplicationDbContext dbContext)
+        private readonly ApplicationDbContext _dbContext;
+        private readonly IPaginationService _pagination;
+        public RepositoryEF(ILogger<RepositoryEF> logger, ApplicationDbContext dbContext,IPaginationService pagination)
         {
             _logger = logger;
             _dbContext = dbContext;
+            _pagination = pagination;
+
         }
 
         public void Insert<T>(T entity) where T : class
@@ -95,17 +102,67 @@ namespace Infrastructure.Repository
             }
         }      
         
-        public async Task<List<T>> WhereAsync<T>(Expression<Func<T, bool>> func) where T : class
+        public async Task<List<Player>> GetPlayersByIdsAsync(List<int> ids, int genderId) 
         {
-            try
+           return await _dbContext.Players.Include(x=> x.Gender).Where(x=> ids.Contains(x.Id) && x.GenderId==genderId).ToListAsync();
+        }
+
+        public async Task<PaginatedList<TournamentDto>> GetTorneosByFiltersAsync(GetTournametsByFilters filter)
+        {
+            var tournaments = _dbContext.Tournaments
+                .Include(x => x.Winner)
+                .ThenInclude(x => x.Gender)
+                .Include(x => x.TournamentPlayers)
+                .ThenInclude(x => x.Player)
+                .ThenInclude(x=> x.Gender)
+                .Include(x => x.Matches)
+                .Include(x=> x.Gender)
+                .Include("Matches.Winner")
+                .Include("Matches.Winner.Gender")
+                .Include("Matches.Player1")
+                .Include("Matches.Player1.Gender")
+                .Include("Matches.Player2")  
+                .Include("Matches.Player2.Gender")
+                .AsQueryable();
+
+            if(filter.StartDate != null)
             {
-                return await _dbContext.Set<T>().Where(func).ToListAsync();
+                tournaments = tournaments.Where(x => x.StartDate.Day == filter.StartDate.GetValueOrDefault().Day 
+                && x.StartDate.Month == filter.StartDate.GetValueOrDefault().Month
+                && x.StartDate.Year == filter.StartDate.GetValueOrDefault().Year);
             }
-            catch (Exception ex)
+
+            if (filter.Gender != null)
             {
-                _logger.LogError(ex, "Error finding entity in where condition");
-                throw;
+                tournaments= tournaments.Where(x => x.GenderId == filter.Gender);
             }
+
+            var tournamentsDto= tournaments.Select(x => new TournamentDto
+            {
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                Gender = x.Gender.Description,
+                Players = x.TournamentPlayers.Select(x => new PlayerDto
+                {
+                    Name = x.Player.Name,
+                    Reaction = x.Player.Reaction,
+                    Skill = x.Player.Skill,
+                    Speed = x.Player.Speed,
+                    Strength = x.Player.Strength,
+                    Gender = x.Player.Gender.Description
+                }).ToList(),
+                Matches = x.Matches.Select(x => new MatchDto
+                {
+                    DateMatch = x.DateMatch,
+                    Player1 = x.Player1,
+                    Player2 = x.Player2,
+                    Winner = x.Winner.Name,
+
+                }).ToList(),
+                Winner = x.Winner
+            });
+
+            return await _pagination.CreateAsync(tournamentsDto, filter.Page, filter.Size);
         }
     }
 }

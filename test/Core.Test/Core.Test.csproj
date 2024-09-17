@@ -25,8 +25,4 @@
     <ProjectReference Include="..\..\src\Core\Core.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="UseCase\V1\" />
-  </ItemGroup>
-
 </Project>

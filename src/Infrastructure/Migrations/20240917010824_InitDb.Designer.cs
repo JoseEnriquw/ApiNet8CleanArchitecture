@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240915225600_InitDb")]
+    [Migration("20240917010824_InitDb")]
     partial class InitDb
     {
         /// <inheritdoc />
@@ -40,7 +40,7 @@ namespace Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Gender");
+                    b.ToTable("gender", (string)null);
 
                     b.HasData(
                         new
@@ -88,7 +88,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("WinnerId");
 
-                    b.ToTable("Match");
+                    b.ToTable("match", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Player", b =>
@@ -129,7 +129,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("GenderId");
 
-                    b.ToTable("Player");
+                    b.ToTable("player", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Tournament", b =>
@@ -158,7 +158,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("WinnerPlayerId");
 
-                    b.ToTable("Tournament");
+                    b.ToTable("tournament", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.TournamentPlayer", b =>
@@ -173,7 +173,7 @@ namespace Infrastructure.Migrations
 
                     b.HasIndex("PlayerId");
 
-                    b.ToTable("TournamentPlayer");
+                    b.ToTable("tournamentPlayer", (string)null);
                 });
 
             modelBuilder.Entity("Core.Domain.Entities.Match", b =>

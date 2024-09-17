@@ -8,6 +8,7 @@ namespace Infrastructure.Persistence.Configurations
     {
         public void Configure(EntityTypeBuilder<Tournament> builder)
         {
+            builder.ToTable("tournament");
             builder.HasKey(t => t.Id);
             builder.Property(t => t.Id).ValueGeneratedOnAdd();
             builder.Property(t => t.StartDate).IsRequired();

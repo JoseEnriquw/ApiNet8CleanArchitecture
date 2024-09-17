@@ -7,7 +7,7 @@ using Core.Domain.Enums;
 using MediatR;
 using System.Net;
 
-namespace Core.UseCase.V1.TournamentOperations.Command.Create
+namespace Core.UseCase.V1.TournamentOperations.Commands.Create
 {
     public class CreateAndPlayTournamentCommand : IRequest<Response<TournamentResult>>
     {
@@ -15,13 +15,13 @@ namespace Core.UseCase.V1.TournamentOperations.Command.Create
         public List<int> PlayersId { get; set; } = null!;
     }
 
-    public class CreateAndPlayTournamentCommandHandler(IRepositoryEF repository,ITournamentService tournamentService) : IRequestHandler<CreateAndPlayTournamentCommand, Response<TournamentResult>>
+    public class CreateAndPlayTournamentCommandHandler(IRepositoryEF repository, ITournamentService tournamentService) : IRequestHandler<CreateAndPlayTournamentCommand, Response<TournamentResult>>
     {
         public async Task<Response<TournamentResult>> Handle(CreateAndPlayTournamentCommand request, CancellationToken cancellationToken)
         {
-            var players = await repository.WhereAsync<Player>(x => request.PlayersId.Any(p => x.Id == p));
-            var response= new Response<TournamentResult>();
-            if (players.Count != request.PlayersId.Count) 
+            var players = await repository.GetPlayersByIdsAsync(request.PlayersId, request.Gender);
+            var response = new Response<TournamentResult>();
+            if (players.Count != request.PlayersId.Count)
             {
                 request.PlayersId.Where(x => players.All(p => x != p.Id)).ToList().ForEach(x =>
                 {
@@ -31,8 +31,8 @@ namespace Core.UseCase.V1.TournamentOperations.Command.Create
             }
             else
             {
-                response.Content= await tournamentService.PlayTournament(players,(EGender)request.Gender);
-                response.StatusCode = HttpStatusCode.OK;    
+                response.Content = await tournamentService.PlayTournament(players, (EGender)request.Gender);
+                response.StatusCode = HttpStatusCode.OK;
             }
 
             return response;

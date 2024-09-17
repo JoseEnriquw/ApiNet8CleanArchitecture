@@ -1,7 +1,7 @@
 ﻿using Core.Common.Interfaces;
 using Core.Domain.Entities;
 
-namespace Core.Common.Strategies
+namespace Core.Common.Models.Strategies
 {
     public class MaleTournamentStrategy : ITournamentStrategy
     {

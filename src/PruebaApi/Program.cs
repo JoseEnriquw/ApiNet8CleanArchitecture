@@ -1,10 +1,5 @@
 using Core.Boopstrap;
-using Core.UseCase.V1.TournamentOperations.Command.Create;
-using FluentValidation;
 using Infrastructure.Boopstrap;
-using Infrastructure.Persistence;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using PruebaApi.Extensions;
 using PruebaApi.Middleware;
 
@@ -21,12 +16,6 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
-
-using (var scope = app.Services.CreateScope())
-{
-    var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
-    context.Database.Migrate();
-}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

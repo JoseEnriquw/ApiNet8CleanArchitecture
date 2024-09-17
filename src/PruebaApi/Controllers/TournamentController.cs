@@ -1,7 +1,9 @@
 ﻿using Asp.Versioning;
+using Core.Common.Models;
 using Core.Domain.Classes;
 using Core.Domain.Dto;
-using Core.UseCase.V1.TournamentOperations.Command.Create;
+using Core.UseCase.V1.TournamentOperations.Commands.Create;
+using Core.UseCase.V1.TournamentOperations.Queries.GetAll;
 using Microsoft.AspNetCore.Mvc;
 using PruebaApi.Helpers;
 using PruebaApi.Models;
@@ -27,42 +29,19 @@ namespace PruebaApi.Controllers
             PlayersId = body.PlayersId
         }));
 
-
-        ///// <summary>
-        ///// Actualización de usuario
-        ///// </summary>
-        ///// <param name="id"></param>
-        ///// <param name="body"></param>
-        ///// <returns></returns>
-        //[HttpPut("{id}")]
-        //[ProducesResponseType(typeof(CreateUserResponse), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(List<Notify>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(List<Notify>), StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> Update(int id, UpdateVM body) => Result(await Sender.Send(new UpdateUserCommand
-        //{
-        //    Id = id,
-        //    Name = body.name,
-        //    Email = body.email
-        //}));
-
-        ///// <summary>
-        ///// Eliminación de un usuario
-        ///// </summary>
-        ///// <param id="id"></param>
-        ///// <returns></returns>
-        //[HttpDelete("{id}")]
-        //[ProducesResponseType(typeof(DeleteUserResponse), StatusCodes.Status204NoContent)]
-        //[ProducesResponseType(typeof(List<Notify>), StatusCodes.Status400BadRequest)]
-        //[ProducesResponseType(typeof(List<Notify>), StatusCodes.Status404NotFound)]
-        //public async Task<IActionResult> Delete(int id) => Result(await Sender.Send(new DeleteUserCommand { Id = id }));
-
-        ///// Listado de Usuarios de la base de datos
-        ///// <remarks>en los remarks podemos documentar información más detallada</remarks>
-        ///// <returns></returns>
-        //[HttpGet]
-        //[ProducesResponseType(typeof(List<User>), StatusCodes.Status200OK)]
-        //[ProducesResponseType(typeof(List<Notify>), StatusCodes.Status400BadRequest)]
-        //public async Task<IActionResult> Get() => Result(await Sender.Send(new GetAllUser()));
+        /// Listado de Torneos por filtros y paginados
+        /// <remarks>en los remarks podemos documentar información más detallada</remarks>
+        /// <returns></returns>
+        [HttpGet]
+        [ProducesResponseType(typeof(PaginatedList<TournamentDto>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(List<Notify>), StatusCodes.Status400BadRequest)]
+        public async Task<IActionResult> Get([FromQuery] DateTime? startDate, int? page, int? size, int? gender) => Result(await Sender.Send(new GetTournametsByFilters()
+        {
+            StartDate = startDate,
+            Gender=gender,
+            Page = page ?? 1,
+            Size = size ?? 10
+        }));
 
     }
 }

@@ -3,8 +3,8 @@ namespace PruebaApi.Models
 {
     public  class TournamentVM
     {
-        public required int Gender { get; set; }
-        public required List<int> PlayersId { get; set; }
+        public int Gender { get; set; }
+        public List<int> PlayersId { get; set; } = null!;
     }
 
 
